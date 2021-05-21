@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Demo</title>
+</head>
+
+<body>
+  <input type="text" id="name">
+  <input type="text" id="message">
+  <button id="send">SEND</button>
+  <div id="message-display"></div>
+  <script>
+    const connection = new WebSocket('wss://8f5af4014129.ngrok.io')
+    const messageNode = document.getElementById('message-display')
+    const button = document.getElementById('send')
+
+    const sendMessage = () => {
+      const name = document.getElementById('name').value
+      const text = document.getElementById('message').value
+      connection.send(JSON.stringify({ user: name, body: text }))
+    }
+
+    button.addEventListener('click', sendMessage)
+    connection.addEventListener('message', (message) => {
+      let parsedMessage = JSON.parse(message.data)
+      const newMessage = document.createElement('div')
+      newMessage.innerHTML = `<p><strong>${parsedMessage.user}:</strong> ${parsedMessage.body}</p>`
+      messageNode.appendChild(newMessage)
+    })
+  </script>
+</body>
+
+</html>
